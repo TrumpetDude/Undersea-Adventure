@@ -18,6 +18,7 @@ def drawText(text, size, color, centerX, centerY):
 background = pygame.image.load("backGround.gif")
 clam = pygame.image.load("clam.gif")
 bubble = pygame.image.load("bubble.gif")
+fish1 = pygame.image.load("1Fish.gif")
 
 shipUP = clam
 shipLEFT = pygame.transform.rotate(shipUP, 90.0)
@@ -25,6 +26,7 @@ shipDOWN = pygame.transform.rotate(shipLEFT, 90.0)
 shipRIGHT = pygame.transform.rotate(shipDOWN, 90.0)
 shipX = randint(0,1234)
 shipY = randint(0,634)
+shooters = 1
 speed = 1
 ticks = 0
 ship = shipUP
@@ -35,9 +37,10 @@ inL = 0
 bubble1 = False
 bubble2 = False
 bubble3 = False
-bubbleDelayAmount = 100
+bubbleDelayAmount = 100              #SINGLE BUBBLE CANNON FIRE RATE
 bubbleDelay = -bubbleDelayAmount-1
-shooters = 1
+fish1OnScreen = False
+
 
 while True:
     
@@ -45,8 +48,14 @@ while True:
     mousePos=pygame.mouse.get_pos()
     mousePressed=pygame.mouse.get_pressed()
 
-    bubbleAimX=(mousePos[0]+shipX)/2
-    bubbleAimY=(mousePos[1]+shipY)/2
+    #bubbleAimX=(mousePos[0]+shipX)/2
+    #bubbleAimY=(mousePos[1]+shipY)/2
+
+    #Make Fish
+    if not(fish1OnScreen) and randint(0,250) == 1:
+        pass
+        #make fish
+    
     #Bubble Shooting
     if sum(mousePressed) > 0 and ticks-bubbleDelay>bubbleDelayAmount/shooters:
             if not(bubble1):    
