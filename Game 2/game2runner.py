@@ -35,6 +35,9 @@ inL = 0
 bubble1 = False
 bubble2 = False
 bubble3 = False
+bubbleDelayAmount = 100
+bubbleDelay = -bubbleDelayAmount-1
+shooters = 1
 
 while True:
     
@@ -44,46 +47,8 @@ while True:
 
     bubbleAimX=(mousePos[0]+shipX)/2
     bubbleAimY=(mousePos[1]+shipY)/2
-
-    #Event Detection
-    for event in pygame.event.get():
-        if (event.type==KEYUP and event.key==K_ESCAPE) or event.type==QUIT:
-            pygame.quit()
-            sys.exit()
-
-        elif event.type==KEYDOWN:
-            
-            #Movement
-            if event.key == K_w:
-                if shipY > 1:
-                    shipY -= speed
-                ship = shipUP
-                inU += 0.1*speed
-                inD -= 0.05*speed
-
-            elif event.key == K_s:
-                if shipY < 652:
-                    shipY += speed
-                ship = shipDOWN
-                inD += 0.1*speed
-                inU -= 0.05*speed
-
-            elif event.key == K_a:
-                if shipX > 1:
-                    shipX -= speed
-                ship = shipLEFT
-                inL += 0.1*speed
-                inR -= 0.05*speed
-
-            elif event.key == K_d:
-                if shipX < 1255:
-                    shipX += speed
-                ship = shipRIGHT
-                inR += 0.1*speed
-                inL -= 0.05*speed
-                
-        #Bubble Shooting
-        if event.type==KEYUP and event.key == K_SPACE:
+    #Bubble Shooting
+    if sum(mousePressed) > 0 and ticks-bubbleDelay>bubbleDelayAmount/shooters:
             if not(bubble1):    
                 bubble1 = True
                 bubbleX1 = shipX-12
@@ -107,12 +72,13 @@ while True:
                     b1y = 5
                 else:
                     b1x = 0
-                    b1y = 5
+                    b1y = 6
                 if mousePos[1] < shipY:
                         b1y *= -1
                 if mousePos[0] < shipX:
                     b1x *= -1
-            elif not(bubble2):
+                bubbleDelay = ticks
+            elif not(bubble2) and shooters >= 2:
                 bubble2 = True
                 bubbleX2 = shipX-12
                 bubbleY2 = shipY-12
@@ -140,7 +106,8 @@ while True:
                     b2y *= -1
                 if mousePos[0] < shipX:
                     b2x *= -1
-            elif not(bubble3):
+                bubbleDelay = ticks
+            elif not(bubble3) and shooters >= 3:
                 bubble3 = True
                 bubbleX3 = shipX-12
                 bubbleY3 = shipY-12
@@ -167,7 +134,45 @@ while True:
                 if mousePos[1] < shipY:
                     b3y *= -1
                 if mousePos[0] < shipX:
-                    b3x *= -1                
+                    b3x *= -1
+                bubbleDelay = ticks
+    #Event Detection
+    for event in pygame.event.get():
+        if (event.type==KEYUP and event.key==K_ESCAPE) or event.type==QUIT:
+            pygame.quit()
+            sys.exit()
+                
+
+                    
+    #Movement
+    keys=pygame.key.get_pressed()
+    if keys[K_w]:
+            if shipY > 90:
+                shipY -= speed
+                ship = shipUP
+                inU += 0.1*speed
+                inD -= 0.05*speed
+
+    elif keys[K_s]:
+            if shipY < 652:
+                shipY += speed
+                ship = shipDOWN
+                inD += 0.1*speed
+                inU -= 0.05*speed
+
+    elif keys[K_a]:
+            if shipX > 1:
+                shipX -= speed
+                ship = shipLEFT
+                inL += 0.1*speed
+                inR -= 0.05*speed
+
+    elif keys[K_d]:
+            if shipX < 1255:
+                shipX += speed
+                ship = shipRIGHT
+                inR += 0.1*speed
+                inL -= 0.05*speed
     #Inertia
     inU -= 0.05*speed
     inD -= 0.05*speed
@@ -185,6 +190,21 @@ while True:
     shipY += inD
     shipX -= inL
     shipY -= inU
+    if shipY < 90:
+        inU -= 0.1
+        inD += 0.1
+    if shipY > 668:
+        shipY -= 1
+        inU += 0.05
+        inD -= 0.05
+    if shipX < 32:
+        shipX += 1
+        inR += 0.05
+        inL -= 0.05
+    if shipX > 1268:
+        shipX -= 1
+        inL += 0.05
+        inR -= 0.05
 
     window.blit(background,(0,0))
 
@@ -208,5 +228,6 @@ while True:
             bubble3=False 
         
     window.blit(ship, (shipX-32, shipY-32))
-    pygame.draw.line(window, (0,0,0), (shipX,shipY), (bubbleAimX,bubbleAimY), 1)
+    #pygame.draw.line(window, (0,0,0), (shipX,shipY), (bubbleAimX,bubbleAimY), 1)
+    #aiming line
     pygame.display.update()
